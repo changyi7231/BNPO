@@ -153,8 +153,8 @@ def compute_bnpo_outcome_advantage(token_level_rewards: torch.Tensor,
         all_p = torch.stack(list(id2mean.values()))
         p_mean = all_p.mean() if all_p.shape[0]>1 else torch.tensor(0.0)
         p_var = all_p.var() if all_p.shape[0]>1 else torch.tensor(1.0)
-        a = (p_mean*(1-p_mean)/p_var-1)*p_mean
-        b = (p_mean*(1-p_mean)/p_var-1)*(1-p_mean)
+        a = (p_mean*(1-p_mean)/p_var-1)*p_mean if p_var > 0 else torch.tensor(0.0)
+        b = (p_mean*(1-p_mean)/p_var-1)*(1-p_mean) if p_var > 0 else torch.tensor(0.0)
         alpha = torch.clamp(1+a/3, min=1.0)
         beta = torch.clamp(1+b/3, min=1.0)
         for i in range(bsz):
